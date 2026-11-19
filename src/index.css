@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-bg: #EAEAEA;
+    --color-text: #121212;
+    --color-border: rgba(0, 0, 0, 0.1);
+    --color-muted: rgba(18, 18, 18, 0.45);
+    --color-muted-hover: rgba(18, 18, 18, 0.7);
+    --logo-filter: none;
+  }
+
+  .dark {
+    --color-bg: #121212;
+    --color-text: #EAEAEA;
+    --color-border: rgba(255, 255, 255, 0.1);
+    --color-muted: rgba(234, 234, 234, 0.45);
+    --color-muted-hover: rgba(234, 234, 234, 0.7);
+    --logo-filter: invert(1);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-text);
+    color: var(--color-bg);
+  }
+}
+
+@layer utilities {
+  .text-muted {
+    color: var(--color-muted);
+  }
+
+  .border-soft {
+    border-color: var(--color-border);
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 1px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+  }
+
+  /* Underline animation */
+  .link-underline {
+    position: relative;
+    text-decoration: none;
+  }
+
+  .link-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: currentColor;
+    transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .link-underline:hover::after {
+    width: 100%;
+  }
+
+  /* Number counter style */
+  .index-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    opacity: 0.4;
+  }
+
+  /* Fade in animation */
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-up {
+    animation: fadeUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  .animation-delay-100 { animation-delay: 100ms; }
+  .animation-delay-200 { animation-delay: 200ms; }
+  .animation-delay-300 { animation-delay: 300ms; }
+  .animation-delay-400 { animation-delay: 400ms; }
+}
