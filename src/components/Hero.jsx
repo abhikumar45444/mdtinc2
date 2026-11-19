@@ -45,32 +45,42 @@ const heroSlides = [
   },
 ]
 
+const SLIDE_DURATION = 4500 // 4.5 seconds per slide for smooth automatic progression
+
 export default function Hero() {
   const [current, setCurrent] = useState(0)
-  const [isPaused, setIsPaused] = useState(false)
   const timerRef = useRef(null)
 
-  // Autoplay timer
+  // Automatic carousel progression
   useEffect(() => {
-    if (isPaused) return
     timerRef.current = setInterval(() => {
       setCurrent((prev) => (prev + 1) % heroSlides.length)
-    }, 6000)
+    }, SLIDE_DURATION)
+
     return () => clearInterval(timerRef.current)
-  }, [isPaused, current])
+  }, [current])
 
   const slide = heroSlides[current]
 
-  const nextSlide = () => setCurrent((prev) => (prev + 1) % heroSlides.length)
-  const prevSlide = () =>
+  const nextSlide = () => {
+    clearInterval(timerRef.current)
+    setCurrent((prev) => (prev + 1) % heroSlides.length)
+  }
+
+  const prevSlide = () => {
+    clearInterval(timerRef.current)
     setCurrent((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1))
+  }
+
+  const goToSlide = (idx) => {
+    clearInterval(timerRef.current)
+    setCurrent(idx)
+  }
 
   return (
     <section
       className="relative w-full h-screen min-h-[680px] max-h-[1080px] overflow-hidden flex flex-col justify-between"
       style={{ backgroundColor: '#0e0e0e', color: '#EAEAEA' }}
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
     >
       {/* Background Fullscreen Visuals with Crossfade */}
       {heroSlides.map((item, idx) => (
@@ -131,12 +141,21 @@ export default function Hero() {
       {/* Middle Horizontal Floating Metadata Bar (Matching Frame 001/005) */}
       <div className="relative z-20 my-auto w-full px-6 md:px-12 pointer-events-auto">
         <div
-          className="max-w-[1560px] mx-auto py-4 px-6 md:px-10 rounded-[4px] flex flex-wrap items-center justify-between gap-4 font-mono text-xs md:text-sm tracking-wider uppercase backdrop-blur-md border border-white/15 shadow-lg"
+          className="relative max-w-[1560px] mx-auto py-4 px-6 md:px-10 rounded-[4px] flex flex-wrap items-center justify-between gap-4 font-mono text-xs md:text-sm tracking-wider uppercase backdrop-blur-md border border-white/15 shadow-lg overflow-hidden"
           style={{
             backgroundColor: 'rgba(18, 18, 18, 0.7)',
             color: '#EAEAEA',
           }}
         >
+          {/* Subtle Live Top Countdown Line */}
+          <div
+            key={current}
+            className="absolute top-0 left-0 h-[2px] bg-white/70"
+            style={{
+              animation: `heroProgress ${SLIDE_DURATION}ms linear forwards`,
+            }}
+          />
+
           {/* Left Label */}
           <span className="opacity-60 text-xs">FEATURED PROJECT</span>
 
@@ -197,7 +216,7 @@ export default function Hero() {
               {heroSlides.map((_, i) => (
                 <button
                   key={i}
-                  onClick={() => setCurrent(i)}
+                  onClick={() => goToSlide(i)}
                   className="transition-all duration-300 rounded-full"
                   style={{
                     width: i === current ? '24px' : '6px',
@@ -211,6 +230,14 @@ export default function Hero() {
           </div>
         </div>
       </div>
+
+      {/* Progress animation keyframe */}
+      <style>{`
+        @keyframes heroProgress {
+          from { width: 0%; }
+          to { width: 100%; }
+        }
+      `}</style>
     </section>
   )
 }
