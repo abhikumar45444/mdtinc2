@@ -1,158 +1,215 @@
-import { useEffect, useRef } from 'react'
-import { ArrowDownRight } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { ArrowUpRight, ArrowLeft, ArrowRight } from 'lucide-react'
 import { asset } from '../utils/asset'
 
-const heroImages = [
-  asset('/images/bold-beautiful-kitchen-lg.jpg'),
-  asset('/images/coastal-escape-lg.jpg'),
-  asset('/images/montecito-kitchen-lg.jpg'),
+const heroSlides = [
+  {
+    index: '01',
+    title: 'THE BOLD AND BEAUTIFUL',
+    category: 'Whole Home Renovation',
+    year: '2024',
+    location: 'Riverside, CA',
+    bgImage: '/images/bold-beautiful-kitchen-lg.jpg',
+    cardImage: '/images/bold-beautiful-kitchen-lg.jpg',
+    tagline: 'Modern residential reconfiguration & bespoke interior finishes',
+  },
+  {
+    index: '02',
+    title: 'THE HOUSE OF PAONAZZO',
+    category: 'Luxury Kitchen & Living',
+    year: '2024',
+    location: 'Orange County, CA',
+    bgImage: '/images/paonazzo-marble-kitchen-lg.jpg',
+    cardImage: '/images/paonazzo-marble-kitchen-lg.jpg',
+    tagline: 'Monolithic Italian marble island & architectural millwork',
+  },
+  {
+    index: '03',
+    title: 'MONTECITO KITCHEN',
+    category: 'Transitional Renovation',
+    year: '2023',
+    location: 'Corona Del Mar, CA',
+    bgImage: '/images/montecito-kitchen-lg.jpg',
+    cardImage: '/images/montecito-kitchen-lg.jpg',
+    tagline: 'Limewash walls, unlacquered brass, & white oak craftsmanship',
+  },
+  {
+    index: '04',
+    title: 'MARBLE-CLAD SPA BATH',
+    category: 'Primary Suite Sanctuary',
+    year: '2023',
+    location: 'Inland Empire, CA',
+    bgImage: '/images/marble-spa-bath-lg.jpg',
+    cardImage: '/images/marble-spa-bath-lg.jpg',
+    tagline: 'Pinky’s arched steel door with floor-to-ceiling honed marble',
+  },
 ]
 
 export default function Hero() {
-  const headlineRef = useRef(null)
-  const bgRef = useRef(null)
+  const [current, setCurrent] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
+  const timerRef = useRef(null)
 
+  // Autoplay timer
   useEffect(() => {
-    const el = headlineRef.current
-    if (!el) return
-    el.style.opacity = '0'
-    el.style.transform = 'translateY(32px)'
-    requestAnimationFrame(() => {
-      el.style.transition = 'opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-      el.style.opacity = '1'
-      el.style.transform = 'translateY(0)'
-    })
-  }, [])
+    if (isPaused) return
+    timerRef.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % heroSlides.length)
+    }, 6000)
+    return () => clearInterval(timerRef.current)
+  }, [isPaused, current])
 
-  // Cycle background images
-  useEffect(() => {
-    let idx = 0
-    const bg = bgRef.current
-    if (!bg) return
-    bg.style.backgroundImage = `url(${heroImages[0]})`
-    const interval = setInterval(() => {
-      idx = (idx + 1) % heroImages.length
-      bg.style.opacity = '0'
-      setTimeout(() => {
-        bg.style.backgroundImage = `url(${heroImages[idx]})`
-        bg.style.opacity = '0.18'
-      }, 600)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [])
+  const slide = heroSlides[current]
+
+  const nextSlide = () => setCurrent((prev) => (prev + 1) % heroSlides.length)
+  const prevSlide = () =>
+    setCurrent((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1))
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-end px-6 md:px-12 pb-16 pt-32 max-w-[1440px] mx-auto">
-      {/* Background image */}
+    <section
+      className="relative w-full h-screen min-h-[680px] max-h-[1080px] overflow-hidden flex flex-col justify-between"
+      style={{ backgroundColor: '#0e0e0e', color: '#EAEAEA' }}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {/* Background Fullscreen Visuals with Crossfade */}
+      {heroSlides.map((item, idx) => (
+        <div
+          key={item.title}
+          className="absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-out will-change-transform"
+          style={{
+            backgroundImage: `url(${asset(item.bgImage)})`,
+            opacity: idx === current ? 0.35 : 0,
+            transform: idx === current ? 'scale(1)' : 'scale(1.08)',
+            filter: 'blur(3px)',
+            transitionProperty: 'opacity, transform',
+          }}
+        />
+      ))}
+
+      {/* Dark Ambient Gradient Layer */}
       <div
-        ref={bgRef}
-        className="absolute inset-0 bg-cover bg-center pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: `url(${heroImages[0]})`,
-          opacity: 0.18,
-          transition: 'opacity 0.6s ease',
-          zIndex: 0,
+          background:
+            'radial-gradient(circle at center, rgba(14,14,14,0.3) 0%, rgba(14,14,14,0.85) 100%)',
         }}
       />
-      {/* Top metadata row */}
-      <div
-        className="absolute top-24 left-6 md:left-12 right-6 md:right-12 flex items-center justify-between"
-        style={{ color: 'var(--color-muted)', zIndex: 1 }}
-      >
-        <span className="font-mono text-xs tracking-widest uppercase">
-          Riverside, CA — Est. 2018
-        </span>
-        <span className="font-mono text-xs tracking-widest uppercase hidden md:block">
-          CSLB #1054266
-        </span>
-        <span className="font-mono text-xs tracking-widest uppercase">
-          Design & Build
-        </span>
-      </div>
 
-      {/* Main headline */}
-      <div ref={headlineRef} className="mb-12 relative" style={{ zIndex: 1 }}>
-        <h1
-          className="font-display text-[clamp(3.5rem,10vw,9.5rem)] leading-[0.9] tracking-tightest mb-6"
-          style={{ color: 'var(--color-text)' }}
+      {/* Center Floating Poster Card (Komma Komma exact aesthetic) */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 p-6">
+        <div
+          className="relative w-[85%] max-w-[340px] sm:max-w-[420px] md:max-w-[480px] aspect-[3/4] sm:aspect-[4/5] rounded-[4px] overflow-hidden shadow-2xl transition-all duration-700 ease-out border border-white/15"
+          style={{
+            backgroundColor: '#161616',
+          }}
         >
-          Where Design
-          <br />
-          <span className="italic">Meets</span> Build.
-        </h1>
-
-        {/* Bottom row: description + CTA */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mt-8">
-          <p
-            className="font-body font-light text-base md:text-lg max-w-md leading-relaxed"
-            style={{ color: 'var(--color-muted)' }}
-          >
-            A sister-led design-build firm bringing vision, investment, and
-            execution together from day one — in Riverside & Orange County, CA.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4">
-            <a
-              href="#work"
-              className="inline-flex items-center gap-3 px-7 py-4 font-mono text-xs tracking-widest uppercase transition-all duration-300"
+          {heroSlides.map((item, idx) => (
+            <div
+              key={item.title}
+              className="absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-out"
               style={{
-                backgroundColor: 'var(--color-text)',
-                color: 'var(--color-bg)',
+                backgroundImage: `url(${asset(item.cardImage)})`,
+                opacity: idx === current ? 1 : 0,
+                transform: idx === current ? 'scale(1)' : 'scale(1.05)',
               }}
-              onMouseEnter={e => { e.currentTarget.style.opacity = '0.85' }}
-              onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
-            >
-              View Our Work
-              <ArrowDownRight size={14} strokeWidth={1.5} />
-            </a>
-            <a
-              href="#contact"
-              className="inline-flex items-center gap-3 px-7 py-4 font-mono text-xs tracking-widest uppercase transition-all duration-300"
-              style={{
-                border: '1px solid var(--color-border)',
-                color: 'var(--color-text)',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.backgroundColor = 'var(--color-text)'
-                e.currentTarget.style.color = 'var(--color-bg)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.backgroundColor = 'transparent'
-                e.currentTarget.style.color = 'var(--color-text)'
-              }}
-            >
-              Book a Discovery Call
-            </a>
+            />
+          ))}
+
+          {/* Minimalist Card Badge */}
+          <div className="absolute top-4 left-4 right-4 flex items-center justify-between text-white/90 font-mono text-[11px] tracking-widest uppercase z-10 pointer-events-none">
+            <span className="px-2 py-0.5 bg-black/50 backdrop-blur-md rounded-[2px] border border-white/10">
+              {slide.category}
+            </span>
+            <span className="px-2 py-0.5 bg-black/50 backdrop-blur-md rounded-[2px] border border-white/10">
+              {slide.location}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Stats row */}
-      <div
-        className="flex flex-wrap gap-8 pt-10 relative"
-        style={{ borderTop: '1px solid var(--color-border)', zIndex: 1 }}
-      >
-        {[
-          { value: '100+', label: 'Projects Completed' },
-          { value: '8+', label: 'Years of Experience' },
-          { value: '2', label: 'Counties Served' },
-          { value: '1', label: 'Team. Full Service.' },
-        ].map((stat) => (
-          <div key={stat.label} className="flex flex-col gap-1">
-            <span
-              className="font-display text-3xl md:text-4xl"
-              style={{ color: 'var(--color-text)' }}
-            >
-              {stat.value}
-            </span>
-            <span
-              className="font-mono text-xs tracking-widest uppercase"
-              style={{ color: 'var(--color-muted)' }}
-            >
-              {stat.label}
-            </span>
+      {/* Middle Horizontal Floating Metadata Bar (Matching Frame 001/005) */}
+      <div className="relative z-20 my-auto w-full px-6 md:px-12 pointer-events-auto">
+        <div
+          className="max-w-[1560px] mx-auto py-4 px-6 md:px-10 rounded-[4px] flex flex-wrap items-center justify-between gap-4 font-mono text-xs md:text-sm tracking-wider uppercase backdrop-blur-md border border-white/15 shadow-lg"
+          style={{
+            backgroundColor: 'rgba(18, 18, 18, 0.7)',
+            color: '#EAEAEA',
+          }}
+        >
+          {/* Left Label */}
+          <span className="opacity-60 text-xs">FEATURED PROJECT</span>
+
+          {/* Center Project Name */}
+          <a
+            href="#work"
+            className="font-medium tracking-widest text-sm md:text-base hover:opacity-75 transition-opacity"
+          >
+            {slide.title}
+          </a>
+
+          {/* Year */}
+          <span className="opacity-60 text-xs hidden sm:inline">{slide.year}</span>
+
+          {/* View Project Action */}
+          <a
+            href="#work"
+            className="flex items-center gap-1.5 font-mono text-xs tracking-widest uppercase hover:underline"
+          >
+            <span>VIEW PROJECT</span>
+            <ArrowUpRight size={14} strokeWidth={2} />
+          </a>
+        </div>
+      </div>
+
+      {/* Bottom Section: Studio Statement + Slideshow Progress Dots */}
+      <div className="relative z-20 pb-8 md:pb-12 px-6 md:px-12 w-full">
+        <div className="max-w-[1560px] mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
+          {/* Bottom Left Studio Intro */}
+          <p className="font-body font-light text-sm sm:text-base md:text-lg max-w-xl leading-relaxed text-white/80">
+            MDT Design & Build is a family-operated, sister-led general
+            contracting and design firm bringing vision, investment, and execution
+            together from day one.
+          </p>
+
+          {/* Bottom Right Controls & Progress Dots */}
+          <div className="flex items-center gap-5 self-start md:self-auto">
+            {/* Arrow Navigation */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={prevSlide}
+                className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-colors"
+                aria-label="Previous slide"
+              >
+                <ArrowLeft size={13} strokeWidth={2} />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-colors"
+                aria-label="Next slide"
+              >
+                <ArrowRight size={13} strokeWidth={2} />
+              </button>
+            </div>
+
+            {/* Slide Dots */}
+            <div className="flex items-center gap-2.5">
+              {heroSlides.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrent(i)}
+                  className="transition-all duration-300 rounded-full"
+                  style={{
+                    width: i === current ? '24px' : '6px',
+                    height: '6px',
+                    backgroundColor: i === current ? '#EAEAEA' : 'rgba(255,255,255,0.3)',
+                  }}
+                  aria-label={`Go to slide ${i + 1}`}
+                />
+              ))}
+            </div>
           </div>
-        ))}
+        </div>
       </div>
     </section>
   )

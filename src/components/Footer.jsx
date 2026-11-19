@@ -1,106 +1,117 @@
-export default function Footer() {
-  const year = new Date().getFullYear()
+import { ArrowUpRight } from 'lucide-react'
+
+export default function Footer({ onOpenContact }) {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   return (
     <footer
+      id="site-footer"
+      className="pt-24 md:pt-36 pb-8 px-6 md:px-12 overflow-hidden"
       style={{
-        borderTop: '1px solid var(--color-border)',
         backgroundColor: 'var(--color-bg)',
+        color: 'var(--color-text)',
+        borderTop: '1px solid var(--color-border)',
       }}
     >
-      {/* Big statement */}
-      <div
-        className="max-w-[1440px] mx-auto px-6 md:px-12 py-16 md:py-24"
-        style={{ borderBottom: '1px solid var(--color-border)' }}
-      >
-        <p
-          className="font-display text-[clamp(2rem,6vw,7rem)] leading-[0.9] tracking-tightest"
-          style={{ color: 'var(--color-text)' }}
-        >
-          Built with intention.
-          <br />
-          <span className="italic" style={{ color: 'var(--color-muted)' }}>
-            Finished with care.
-          </span>
-        </p>
-      </div>
-
-      {/* Bottom row */}
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-8">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          {/* Brand */}
-          <div className="flex flex-col gap-1">
-            <span
-              className="font-display text-lg tracking-tight"
-              style={{ color: 'var(--color-text)' }}
-            >
-              MDT Design & Build
+      <div className="max-w-[1560px] mx-auto flex flex-col justify-between">
+        {/* Four Column Metadata Layout (Matching Frame 030) */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-12 mb-24 font-mono text-xs tracking-wider">
+          {/* Column 1: Contact Info */}
+          <div className="flex flex-col gap-3">
+            <span className="uppercase opacity-40 font-semibold mb-1">
+              CONTACT INFO
             </span>
-            <span
-              className="font-mono text-xs tracking-widest uppercase"
-              style={{ color: 'var(--color-muted)' }}
+            <a
+              href="mailto:themejiateam@gmail.com"
+              className="hover:underline transition-all text-muted hover:text-onyx dark:hover:text-alabaster"
             >
-              CSLB #1054266 — Riverside, CA
-            </span>
+              themejiateam@gmail.com
+            </a>
+            <a
+              href="tel:+19513739868"
+              className="hover:underline transition-all text-muted hover:text-onyx dark:hover:text-alabaster"
+            >
+              (951) 373-9868
+            </a>
+            <button
+              onClick={onOpenContact}
+              className="text-left flex items-center gap-1.5 hover:underline text-muted hover:text-onyx dark:hover:text-alabaster pt-1"
+            >
+              <span>Book a call</span>
+              <ArrowUpRight size={12} strokeWidth={1.5} />
+            </button>
           </div>
 
-          {/* Nav links */}
-          <nav className="flex flex-wrap gap-6">
-            {[
-              { label: 'About', href: '#about' },
-              { label: 'Services', href: '#services' },
-              { label: 'Work', href: '#work' },
-              { label: 'Contact', href: '#contact' },
-            ].map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="font-mono text-xs tracking-widest uppercase link-underline"
-                style={{ color: 'var(--color-muted)' }}
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
+          {/* Column 2: Navigation */}
+          <div className="flex flex-col gap-3">
+            <span className="uppercase opacity-40 font-semibold mb-1">
+              NAVIGATION
+            </span>
+            <a
+              href="#"
+              onClick={scrollToTop}
+              className="uppercase hover:underline text-muted hover:text-onyx dark:hover:text-alabaster"
+            >
+              HOME
+            </a>
+            <a
+              href="#work"
+              className="uppercase hover:underline text-muted hover:text-onyx dark:hover:text-alabaster"
+            >
+              WORK
+            </a>
+            <a
+              href="#services"
+              className="uppercase hover:underline text-muted hover:text-onyx dark:hover:text-alabaster"
+            >
+              SERVICES
+            </a>
+            <a
+              href="#about"
+              className="uppercase hover:underline text-muted hover:text-onyx dark:hover:text-alabaster"
+            >
+              STUDIO
+            </a>
+            <a
+              href="#contact"
+              className="uppercase hover:underline text-muted hover:text-onyx dark:hover:text-alabaster"
+            >
+              CONTACT
+            </a>
+          </div>
 
-          {/* Social */}
-          <div className="flex gap-5">
-            {[
-              { label: 'Instagram', href: 'https://instagram.com' },
-              { label: 'Houzz', href: 'https://houzz.com' },
-              { label: 'Email', href: 'mailto:themejiateam@gmail.com' },
-            ].map((social) => (
-              <a
-                key={social.label}
-                href={social.href}
-                className="font-mono text-xs tracking-widest uppercase link-underline"
-                style={{ color: 'var(--color-muted)' }}
-                target={social.href.startsWith('http') ? '_blank' : undefined}
-                rel={social.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-              >
-                {social.label}
-              </a>
-            ))}
+          {/* Column 3: Studio Location & Coordinates */}
+          <div className="flex flex-col gap-3">
+            <span className="uppercase opacity-40 font-semibold mb-1">
+              STUDIO
+            </span>
+            <span className="text-muted">Riverside, CA</span>
+            <span className="text-muted">Inland Empire & OC</span>
+            <span className="text-muted">34.0300° N, 117.3700° W</span>
+            <span className="text-muted">CSLB #1054266</span>
+          </div>
+
+          {/* Column 4: Privacy & Legal */}
+          <div className="flex flex-col gap-3">
+            <span className="uppercase opacity-40 font-semibold mb-1">
+              PRIVACY & LICENSE
+            </span>
+            <span className="text-muted">Copyright © 2026 MDT, Inc.</span>
+            <span className="text-muted">B-General Building Contractor</span>
+            <span className="text-muted">Licensed, Bonded & Insured</span>
+            <span className="text-muted">Terms of Service</span>
           </div>
         </div>
 
-        {/* Copyright */}
-        <div
-          className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mt-8 pt-6"
-          style={{ borderTop: '1px solid var(--color-border)' }}
-        >
-          <span
-            className="font-mono text-xs tracking-widest"
-            style={{ color: 'var(--color-muted)', opacity: 0.5 }}
+        {/* Massive Edge-to-Edge Macro Typography (Frame 030 / 050) */}
+        <div className="w-full pt-12 border-t border-soft select-none overflow-hidden">
+          <h1
+            className="font-display font-bold text-[clamp(4.2rem,15vw,17rem)] leading-[0.82] tracking-tighter uppercase whitespace-nowrap text-center text-onyx dark:text-alabaster opacity-95 transition-opacity"
           >
-            © {year} MDT, Inc. All rights reserved.
-          </span>
-          <span
-            className="font-mono text-xs tracking-widest"
-            style={{ color: 'var(--color-muted)', opacity: 0.5 }}
-          >
-            34°03′N 117°22′W — Riverside, California
-          </span>
+            MDT INC
+          </h1>
         </div>
       </div>
     </footer>
